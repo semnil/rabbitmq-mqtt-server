@@ -1,0 +1,6 @@
+---
+- selinux: state=disabled
+  sudo: true
+
+- service: name=firewalld enabled=no state=stopped
+  sudo: true

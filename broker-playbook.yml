@@ -1,0 +1,8 @@
+---
+- name: MQTT broker
+  hosts: all
+  user: root
+
+  roles:
+    - disable_security
+    - rabbit_mq
