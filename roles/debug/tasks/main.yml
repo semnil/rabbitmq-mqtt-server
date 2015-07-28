@@ -1,3 +1,0 @@
----
-- name: print msg
-  debug: msg="Hello, world!"
