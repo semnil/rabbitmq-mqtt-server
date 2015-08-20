@@ -72,6 +72,8 @@ Vagrant.configure(2) do |config|
     ansible.playbook = "broker-playbook.yml"
   end
 
+  config.ssh.insert_key = false
+
   config.vm.define "node1" do |node1|
     node1.vm.hostname = "node1"
     node1.vm.network :private_network, ip: "192.168.33.11"
