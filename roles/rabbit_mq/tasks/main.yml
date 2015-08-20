@@ -24,6 +24,17 @@
   sudo: yes
   when: mqtt_enabled.rc != 0
 
+- name: Check plug-in(WebSocket)
+  shell: /usr/sbin/rabbitmq-plugins list rabbitmq_web_stomp | grep "[E]"
+  ignore_errors: yes
+  register: mqtt_enabled
+  changed_when: false
+
+- name: Enable plug-in(WebSocket)
+  shell: /usr/sbin/rabbitmq-plugins enable rabbitmq_web_stomp
+  sudo: yes
+  when: mqtt_enabled.rc != 0
+
 - name: Check plug-in(Manager)
   shell: /usr/sbin/rabbitmq-plugins list rabbitmq_management | grep "[E]"
   ignore_errors: yes
@@ -35,5 +46,28 @@
   sudo: yes
   when: management_enabled.rc != 0
 
+- name: Copy cookie
+  copy: src=".erlang.cookie" dest="/var/lib/rabbitmq/.erlang.cookie" owner=rabbitmq group=rabbitmq mode=0400
+  sudo: yes
+
 - service: name=rabbitmq-server enabled=yes state=started
   sudo: yes
+
+- name: Check cluster
+  shell: rabbitmqctl cluster_status | grep "rabbit@{{ master_node_hostname }}"
+  sudo: yes
+  ignore_errors: yes
+  register: cluster_created
+  when: inventory_hostname != "{{ master_node_hostname }}"
+  changed_when: false
+
+- name: Cluster settings
+  shell: >-
+    rabbitmqctl cluster_status &&
+    rabbitmqctl stop_app &&
+    rabbitmqctl reset &&
+    rabbitmqctl join_cluster rabbit@{{ master_node_hostname }} &&
+    rabbitmqctl start_app
+  sudo: yes
+  sudo_user: rabbitmq
+  when: inventory_hostname != "{{ master_node_hostname }}" and cluster_created.rc != 0

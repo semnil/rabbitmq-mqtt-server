@@ -1,0 +1,5 @@
+---
+- name: Check repo
+  lineinfile: dest=/etc/hosts regexp='^{{ item.ip }}' line='{{ item.ip }} {{ item.name }}' owner=root group=root mode=0644
+  with_items: hosts
+  sudo: yes

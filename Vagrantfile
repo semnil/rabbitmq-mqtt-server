@@ -26,7 +26,7 @@ Vagrant.configure(2) do |config|
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
-  config.vm.network "private_network", ip: "192.168.33.10"
+  # config.vm.network "private_network", ip: "192.168.33.10"
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -70,5 +70,15 @@ Vagrant.configure(2) do |config|
   # SHELL
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "broker-playbook.yml"
+  end
+
+  config.vm.define "node1" do |node1|
+    node1.vm.hostname = "node1"
+    node1.vm.network :private_network, ip: "192.168.33.11"
+  end
+
+  config.vm.define "node2" do |node2|
+    node2.vm.hostname = "node2"
+    node2.vm.network :private_network, ip: "192.168.33.12"
   end
 end

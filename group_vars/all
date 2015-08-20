@@ -3,3 +3,9 @@
 ansible_ssh_port: 22
 ansible_ssh_user: vagrant
 ansible_ssh_private_key_file: .vagrant/machines/default/virtualbox/private_key
+
+master_node_hostname: node1
+
+hosts:
+  - { name: 'node1', ip: '192.168.33.11' }
+  - { name: 'node2', ip: '192.168.33.12' }

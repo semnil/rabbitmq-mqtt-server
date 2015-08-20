@@ -24,7 +24,7 @@ if __name__ == '__main__':
     mqttc.on_connect = on_connect
     mqttc.on_subscribe = on_subscribe
 
-    mqttc.connect("192.168.33.10", 1883, 60)
+    mqttc.connect("192.168.33.12", 1883, 60)
 
     mqttc.subscribe("my/topic/string", 0)
 

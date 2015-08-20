@@ -21,6 +21,6 @@ if __name__ == '__main__':
     mqttc.on_connect = on_connect
     mqttc.on_publish = on_publish
 
-    mqttc.connect("192.168.33.10", 1883, 60)
+    mqttc.connect("192.168.33.11", 1883, 60)
 
     mqttc.publish("my/topic/string", "hello world", 1)
