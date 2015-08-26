@@ -71,3 +71,50 @@
   sudo: yes
   sudo_user: rabbitmq
   when: inventory_hostname != "{{ master_node_hostname }}" and cluster_created.rc != 0
+
+- name: Check publisher user
+  shell: rabbitmqctl list_users | grep "{{ publisher.user }}"
+  sudo: yes
+  ignore_errors: yes
+  register: publisher_user_created
+  when: inventory_hostname != "{{ master_node_hostname }}"
+  changed_when: false
+
+- name: Check virtual host
+  shell: rabbitmqctl list_vhosts | grep "{{ vhost.name }}"
+  sudo: yes
+  ignore_errors: yes
+  register: vhost_created
+  when: inventory_hostname != "{{ master_node_hostname }}"
+  changed_when: false
+
+- name: Add virtual host
+  shell: >-
+    rabbitmqctl add_vhost {{ vhost.name }}
+  sudo: yes
+  sudo_user: rabbitmq
+  when: inventory_hostname != "{{ master_node_hostname }}" and vhost_created.rc != 0
+
+- name: Add publisher user
+  shell: >-
+    rabbitmqctl add_user {{ publisher.user }} {{ publisher.password }} &&
+    rabbitmqctl set_permissions -p {{ vhost.name }} {{ publisher.user }} ".*" ".*" ".*"
+  sudo: yes
+  sudo_user: rabbitmq
+  when: inventory_hostname != "{{ master_node_hostname }}" and publisher_user_created.rc != 0
+
+- name: Check subscriber user
+  shell: rabbitmqctl list_users | grep "{{ subscriber.user }}"
+  sudo: yes
+  ignore_errors: yes
+  register: subscriber_user_created
+  when: inventory_hostname != "{{ master_node_hostname }}"
+  changed_when: false
+
+- name: Add subscriber user
+  shell: >-
+    rabbitmqctl add_user {{ subscriber.user }} {{ subscriber.password }} &&
+    rabbitmqctl set_permissions -p {{ vhost.name }} {{ subscriber.user }} ".*" ".*" ".*"
+  sudo: yes
+  sudo_user: rabbitmq
+  when: inventory_hostname != "{{ master_node_hostname }}" and subscriber_user_created.rc != 0
