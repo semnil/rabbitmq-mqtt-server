@@ -46,6 +46,17 @@
   sudo: yes
   when: management_enabled.rc != 0
 
+- name: Check plug-in(Visualiser)
+  shell: /usr/sbin/rabbitmq-plugins list rabbitmq_management_visualiser | grep "[E]"
+  ignore_errors: yes
+  register: visualiser_enabled
+  changed_when: false
+
+- name: Enable plug-in(Visualiser)
+  shell: /usr/sbin/rabbitmq-plugins enable rabbitmq_management_visualiser
+  sudo: yes
+  when: visualiser_enabled.rc != 0
+
 - name: Copy cookie
   copy: src=".erlang.cookie" dest="/var/lib/rabbitmq/.erlang.cookie" owner=rabbitmq group=rabbitmq mode=0400
   sudo: yes
