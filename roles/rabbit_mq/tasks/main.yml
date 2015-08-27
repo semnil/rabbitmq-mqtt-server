@@ -83,6 +83,12 @@
   sudo_user: rabbitmq
   when: inventory_hostname != "{{ master_node_hostname }}" and cluster_created.rc != 0
 
+- name: Change guest password
+  shell: rabbitmqctl change_password guest {{ guest_password }}
+  sudo: yes
+  sudo_user: rabbitmq
+  when: inventory_hostname != "{{ master_node_hostname }}" and repo_installed.rc != 0
+
 - name: Check publisher user
   shell: rabbitmqctl list_users | grep "{{ publisher.user }}"
   sudo: yes
